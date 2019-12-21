@@ -1,147 +1,45 @@
 package odm.voltaire.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.time.DayOfWeek;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import odm.voltaire.models.Product;
-import odm.voltaire.models.Subscription;
-import odm.voltaire.models.SubscriptionProduct;
+import odm.voltaire.fixtures.SubscriptionFixture;
 
 public class BillingServiceTest {
-  private static final double DELTA = 1e-15;
+  // private static final double DELTA = 1e-15;
 
-  @Test
-  public void CalculateChargesForSubscriptionProductDayOfWeekSpecific() {
-    double dayRate = WednesdayHdProduct().getDayRate();
-    SubscriptionProduct sp = new SubscriptionProduct();
-    sp.setProduct(WednesdayHdProduct());
+  private BillingService bs;
 
-    List<TestCase> cases = new ArrayList<>();
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,2), dayRate * 1));
-    cases.add(new TestCase(LocalDate.of(2020,1,2), LocalDate.of(2020,1,3), 0.0));
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,14), dayRate * 2));
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,28), dayRate * 4));
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,29), dayRate * 5));
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,30), dayRate * 5));
-
+  @Before
+  public void Setup() {
     CalendarService cs = new CalendarService();
-    BillingService bs = new BillingService(cs);
-    for (TestCase tc: cases) {
-      assertEquals((Double)tc.expected, (Double)bs.CalculateChargesForSubscriptionProductBetween(tc.start, tc.end, sp));
-    }
+    BillingUtilities bu = new BillingUtilities(cs);
+    SuspensionCreditService scs = new SuspensionCreditService(bu);
+    bs = new BillingService(bu, scs);
   }
 
   @Test
-  public void CalculateChargesForSubscriptionProduct() {
-    double dayRate = DigitalProduct().getDayRate();
-    SubscriptionProduct sp = new SubscriptionProduct();
-    sp.setProduct(DigitalProduct());
+  public void BasicSundayOnlyBilling() {
+    LocalDate billDate = LocalDate.of(2020,1,1);
 
-    List<TestCase> cases = new ArrayList<>();
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,1), dayRate * 1));
-    cases.add(new TestCase(LocalDate.of(2020,1,2), LocalDate.of(2020,1,3), dayRate * 2));
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,14), dayRate * 14));
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,28), dayRate * 28));
+    assertEquals(new BigDecimal("32"), bs.RunBilling(billDate, SubscriptionFixture.HdSevenDay()));
+    assertEquals(new BigDecimal("8"), bs.RunBilling(billDate, SubscriptionFixture.HdSundayOnly()));
+    assertEquals(new BigDecimal("5.6").setScale(2), 
+      bs.RunBilling(billDate, SubscriptionFixture.DigitalOnly()).setScale(2, RoundingMode.HALF_EVEN));
+    // 32 - 13
+    assertEquals(new BigDecimal("19"), bs.RunBilling(billDate, SubscriptionFixture.HdSevenDayWithSuspension()));
+    // 8 - 4
+    assertEquals(new BigDecimal("4"), bs.RunBilling(billDate, SubscriptionFixture.HdSundayOnlyWithSuspension()));
+    assertEquals(new BigDecimal("3.4").setScale(2), 
+      bs.RunBilling(billDate, SubscriptionFixture.DigitalOnlyWithSuspension()).setScale(2, RoundingMode.HALF_EVEN));
 
-    CalendarService cs = new CalendarService();
-    BillingService bs = new BillingService(cs);
-    for (TestCase tc: cases) {
-      assertEquals((Double)tc.expected, (Double)bs.CalculateChargesForSubscriptionProductBetween(tc.start, tc.end, sp));
-    }
-  }
-
-  @Test
-  public void CaclulateChargesForSubscriptionBetween() {
-    SubscriptionProduct spWed = new SubscriptionProduct();
-    spWed.setProduct(WednesdayHdProduct());
-    SubscriptionProduct spSun1 = new SubscriptionProduct();
-    spSun1.setProduct(SundayHdProduct());
-    SubscriptionProduct spSun2 = new SubscriptionProduct();
-    spSun2.setProduct(SundayHdProduct());
-    SubscriptionProduct spXword = new SubscriptionProduct();
-    spXword.setProduct(XWordProduct());
-    SubscriptionProduct spCooking = new SubscriptionProduct();
-    spCooking.setProduct(DigitalProduct());
-    Subscription s = new Subscription();
-    List<SubscriptionProduct> coll = new ArrayList<>();
-    coll.add(spWed);
-    coll.add(spSun1);
-    coll.add(spSun2);
-    coll.add(spXword);
-    coll.add(spCooking);
-    s.setProducts(coll);
-
-    List<TestCase> cases = new ArrayList<>();
-    // 1 Wednesday      1.0
-    // 0 Sundays        0.0
-    // 1 day of xword   0.15
-    // 1 day of cooking 0.20
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,1), 1.35));
-    // 0 Wednesday      0.0
-    // 2 Sundays        4.0
-    // 1 day of xword   0.15
-    // 1 day of cooking 0.20
-    cases.add(new TestCase(LocalDate.of(2020,1,5), LocalDate.of(2020,1,5), 4.35));
-    // 1 Wednesday      1.0
-    // 2 Sundays        4.0
-    // 5 day of xword   0.75
-    // 5 day of cooking 1.0
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,5), 6.75));
-    // 4 Wednesday       4.0
-    // 8 Sundays        16.0
-    // 28 day of xword   4.2
-    // 28 day of cooking 5.6
-    cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,28), 29.8));
-    CalendarService cs = new CalendarService();
-    BillingService bs = new BillingService(cs);
-    for (TestCase tc: cases) {
-      assertEquals(tc.expected, bs.CalculateChargesForSubscriptionBetween(tc.start, tc.end, s), DELTA);
-    }
-  }
-
-  private Product WednesdayHdProduct() {
-    Product p = new Product();
-    p.setDayRate(1.0);
-    p.setWeekdaySpecific(true);
-    p.setDeliveryDay(DayOfWeek.WEDNESDAY);
-    return p;
-  }
-
-  private Product SundayHdProduct() {
-    Product p = new Product();
-    p.setDayRate(2.0);
-    p.setWeekdaySpecific(true);
-    p.setDeliveryDay(DayOfWeek.SUNDAY);
-    return p;
-  }
-  private Product DigitalProduct() {
-    Product p = new Product();
-    p.setDayRate(0.2);
-    p.setWeekdaySpecific(false);
-    return p;
-  }
-  private Product XWordProduct() {
-    Product p = new Product();
-    p.setDayRate(0.15);
-    p.setWeekdaySpecific(false);
-    return p;
-  }
-
-  private class TestCase {
-    public LocalDate start;
-    public LocalDate end;
-    public Double expected;
-    public TestCase(LocalDate d1, LocalDate d2, Double expected) {
-      this.start = d1;
-      this.end = d2;
-      this.expected = expected;
-    }
   }
 
 }

@@ -7,17 +7,29 @@
  */
 
 plugins {
+
+//    id 'org.springframework.boot' version '2.2.2.RELEASE'
+//    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    
     // Apply the java plugin to add support for Java
     id 'java'
 
     // Apply the application plugin to add support for building a CLI application.
     id 'application'
+
+    id "io.freefair.lombok" version "4.1.6"
+
 }
+
+//group = 'odm'
+//version = '0.0.1-SNAPSHOT'
+//sourceCompatibility = '1.8'
 
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -26,7 +38,13 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
+
+//    implementation 'org.springframework.boot:spring-boot-starter'
+    // testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    //     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    // }
 }
+
 
 application {
     // Define the main class for the application.

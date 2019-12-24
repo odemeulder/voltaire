@@ -13,7 +13,7 @@ public class TierFixture {
 
   public static Tier basicOneTier(BigDecimal dailyRate) {
     Tier t = new Tier();
-    t.setStartDay(57);
+    t.setStartDay(0);
     t.setRate(1, dailyRate);
     return t;    
   }

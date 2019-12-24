@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import odm.voltaire.fixtures.ProductFixture;
+import odm.voltaire.fixtures.SubscriptionFixture;
 import odm.voltaire.fixtures.SubscriptionProductFixture;
 import odm.voltaire.models.Subscription;
 import odm.voltaire.models.SubscriptionProduct;
@@ -40,7 +41,12 @@ public class BillingUtilitiesTest {
     cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,30), dayRate.multiply(new BigDecimal(5))));
 
     for (TestCase tc: cases) {
-      BigDecimal actual = bu.CalculateChargesForSubscriptionProductBetween(tc.start, tc.end, SubscriptionProductFixture.HdWednesday());
+      BigDecimal actual = bu.CalculateChargesForSubscriptionProductBetween(
+        tc.start, 
+        tc.end, 
+        SubscriptionProductFixture.HdWednesday(),
+        SubscriptionFixture.HdSundayOnly());
+      
       assertEquals(tc.expected, actual);
     }
   }
@@ -56,7 +62,11 @@ public class BillingUtilitiesTest {
     cases.add(new TestCase(LocalDate.of(2020,1,1), LocalDate.of(2020,1,28), dayRate.multiply(new BigDecimal(28))));
 
     for (TestCase tc: cases) {
-      BigDecimal actual = bu.CalculateChargesForSubscriptionProductBetween(tc.start, tc.end, SubscriptionProductFixture.Digital());
+      BigDecimal actual = bu.CalculateChargesForSubscriptionProductBetween(
+        tc.start, 
+        tc.end, 
+        SubscriptionProductFixture.Digital(),
+        SubscriptionFixture.DigitalOnly());
       assertEquals(tc.expected, actual);
     }
   }
@@ -76,6 +86,7 @@ public class BillingUtilitiesTest {
     coll.add(spXword);
     coll.add(spCooking);
     s.setProducts(coll);
+    s.setStartDate(LocalDate.of(2020,1,1));
 
     List<TestCase> cases = new ArrayList<>();
     // 1 Wednesday      1.0

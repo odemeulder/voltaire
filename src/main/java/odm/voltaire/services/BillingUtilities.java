@@ -23,13 +23,17 @@ public class BillingUtilities {
   public BigDecimal CalculateChargesForSubscriptionBetween(LocalDate start, LocalDate end, Subscription s) {
     BigDecimal total = new BigDecimal(0.0);
     for (SubscriptionProduct sp : s.getProducts()) {
-      total = CalculateChargesForSubscriptionProductBetween(start, end, sp).add(total);
+      total = CalculateChargesForSubscriptionProductBetween(start, end, sp, s).add(total);
     }
     return total;
   }
 
   // Start and end date inclusive
-  public BigDecimal CalculateChargesForSubscriptionProductBetween(LocalDate start, LocalDate end, SubscriptionProduct sp) {
+  public BigDecimal CalculateChargesForSubscriptionProductBetween(
+    LocalDate start, 
+    LocalDate end, 
+    SubscriptionProduct sp,
+    Subscription s) {
     if (sp.getProduct() == null) {
       throw new IllegalArgumentException("Invalid product (null)");
     }
@@ -42,7 +46,8 @@ public class BillingUtilities {
     } else {
       days = BigDecimal.valueOf(calendarService.DaysBetween(start, end));
     }
-    return product.getDayRate().multiply(days);
+    int dayInTier = calendarService.DaysBetween(s.getStartDate(), start) ;
+    return product.getDayRate(dayInTier).multiply(days);
   }
 
 }

@@ -30,7 +30,11 @@ public class SuspensionCreditService {
         }
         LocalDate suspensionStart = suspension.getStartDate().isBefore(start) ? start : suspension.getStartDate();
         LocalDate suspensionEnd = suspension.getEndDate().isAfter(end) ? end : suspension.getEndDate();
-        BigDecimal credit = billingUtilities.CalculateChargesForSubscriptionProductBetween(suspensionStart, suspensionEnd, sp);
+        BigDecimal credit = billingUtilities.CalculateChargesForSubscriptionProductBetween(
+          suspensionStart, 
+          suspensionEnd, 
+          sp,
+          s);
         credits.add(new SuspensionCredit(suspensionStart, suspensionEnd, credit));
       }
     }

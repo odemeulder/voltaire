@@ -34,7 +34,7 @@ public class SuspensionCreditService {
           suspensionStart, 
           suspensionEnd, 
           sp,
-          s);
+          s.getStartDate().plusDays(-s.getTerm()));
         credits.add(new SuspensionCredit(suspensionStart, suspensionEnd, credit));
       }
     }

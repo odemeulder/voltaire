@@ -79,6 +79,7 @@ public class SuspensionCreditServiceTest {
 
   private Subscription getSub(List<Suspension> suspensionList) {
     Subscription s = new Subscription();
+    s.setStartDate(LocalDate.of(2020,1,1));
     List<SubscriptionProduct> spl = new ArrayList<>();
     SubscriptionProduct sp = SubscriptionProductFixture.Digital();
     sp.setPendingSuspensions(suspensionList);

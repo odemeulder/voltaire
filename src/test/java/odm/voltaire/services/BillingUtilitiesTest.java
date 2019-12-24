@@ -45,7 +45,7 @@ public class BillingUtilitiesTest {
         tc.start, 
         tc.end, 
         SubscriptionProductFixture.HdWednesday(),
-        SubscriptionFixture.HdSundayOnly());
+        SubscriptionFixture.HdSundayOnly().getStartDate().plusDays(-28));
       
       assertEquals(tc.expected, actual);
     }
@@ -66,7 +66,7 @@ public class BillingUtilitiesTest {
         tc.start, 
         tc.end, 
         SubscriptionProductFixture.Digital(),
-        SubscriptionFixture.DigitalOnly());
+        SubscriptionFixture.DigitalOnly().getStartDate().plusDays(-28));
       assertEquals(tc.expected, actual);
     }
   }
@@ -86,7 +86,8 @@ public class BillingUtilitiesTest {
     coll.add(spXword);
     coll.add(spCooking);
     s.setProducts(coll);
-    s.setStartDate(LocalDate.of(2020,1,1));
+    LocalDate startDate = LocalDate.of(2020,1,1);
+    s.setStartDate(startDate);
 
     List<TestCase> cases = new ArrayList<>();
     // 1 Wednesday      1.0

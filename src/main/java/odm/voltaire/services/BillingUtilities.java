@@ -14,26 +14,26 @@ import odm.voltaire.models.SubscriptionProduct;
  */
 public class BillingUtilities {
 
-  private CalendarService calendarService;
-  
-  public BillingUtilities(CalendarService cs) {
+  private final CalendarService calendarService;
+
+  public BillingUtilities(final CalendarService cs) {
     this.calendarService = cs;
   }
 
-  public BigDecimal CalculateChargesForSubscriptionBetween(LocalDate start, LocalDate end, Subscription s) {
+  public BigDecimal CalculateChargesForSubscriptionBetween(final LocalDate start, final LocalDate end, final Subscription s) {
     BigDecimal total = new BigDecimal(0.0);
-    for (SubscriptionProduct sp : s.getProducts()) {
-      total = CalculateChargesForSubscriptionProductBetween(start, end, sp, s).add(total);
+    for (final SubscriptionProduct sp : s.getProducts()) {
+      total = CalculateChargesForSubscriptionProductBetween(start, end, sp, s.getStartDate()).add(total);
     }
     return total;
   }
 
   // Start and end date inclusive
   public BigDecimal CalculateChargesForSubscriptionProductBetween(
-    LocalDate start, 
-    LocalDate end, 
-    SubscriptionProduct sp,
-    Subscription s) {
+    final LocalDate start, 
+    final LocalDate end, 
+    final SubscriptionProduct sp,
+    LocalDate licenseStart) {
     if (sp.getProduct() == null) {
       throw new IllegalArgumentException("Invalid product (null)");
     }
@@ -46,7 +46,7 @@ public class BillingUtilities {
     } else {
       days = BigDecimal.valueOf(calendarService.DaysBetween(start, end));
     }
-    int dayInTier = calendarService.DaysBetween(s.getStartDate(), start) ;
+    int dayInTier = calendarService.DaysBetween(licenseStart, start) ;
     return product.getDayRate(dayInTier).multiply(days);
   }
 

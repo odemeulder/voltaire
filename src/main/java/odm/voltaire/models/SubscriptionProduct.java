@@ -9,4 +9,5 @@ public class SubscriptionProduct {
   private Product product;
   private Address deliveryAddress;
   private List<Suspension> pendingSuspensions;
+  private Promo promotion;
 }

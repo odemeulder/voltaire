@@ -33,5 +33,4 @@ public class BillingService {
     return total.subtract(credits);
   }
 
-
 }

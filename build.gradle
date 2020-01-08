@@ -35,6 +35,9 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:28.0-jre'
+    
+    // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.28.2'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'

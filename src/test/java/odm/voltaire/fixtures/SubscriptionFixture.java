@@ -31,6 +31,16 @@ public class SubscriptionFixture {
     return s;
   }
 
+  public static Subscription HdFiveDayWithPromo() {
+    Subscription s = newSubscription();
+    s.getProducts().add(SubscriptionProductFixture.HdMondayWithPromo());
+    s.getProducts().add(SubscriptionProductFixture.HdTuesdayWithPromo());
+    s.getProducts().add(SubscriptionProductFixture.HdWednesdayWithPromo());
+    s.getProducts().add(SubscriptionProductFixture.HdThursday());
+    s.getProducts().add(SubscriptionProductFixture.HdFriday());
+    return s;
+  }
+
   public static Subscription HdSevenDayWithSuspension() {
     Subscription s = newSubscription();
     s.getProducts().add(SubscriptionProductFixture.HdMondayWithSuspension());

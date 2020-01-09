@@ -50,6 +50,15 @@ public class SubscriptionProductFixture {
   public static SubscriptionProduct HdSundayWithSuspension() {
     return createSubscriptionProductWithSuspension(ProductFixture.HdSunday());
   }
+  public static SubscriptionProduct HdMondayWithPromo() {
+    return createSubscriptionProductWithPromo(ProductFixture.HdMonday());
+  }
+  public static SubscriptionProduct HdTuesdayWithPromo() {
+    return createSubscriptionProductWithPromo(ProductFixture.HdTuesday());
+  }
+  public static SubscriptionProduct HdWednesdayWithPromo() {
+    return createSubscriptionProductWithPromo(ProductFixture.HdWednesday());
+  }
 
   public static SubscriptionProduct Digital() {
     return createSubscriptionProduct(ProductFixture.Digital());
@@ -63,15 +72,16 @@ public class SubscriptionProductFixture {
   }
 
   private static SubscriptionProduct createSubscriptionProduct(Product p) {
-    SubscriptionProduct sp = new SubscriptionProduct();
-    sp.setProduct(p);
-    return sp;
+    return SubscriptionProduct.builder().product(p).build();
   }
 
   private static SubscriptionProduct createSubscriptionProductWithSuspension(Product p) {
-    SubscriptionProduct sp = new SubscriptionProduct();
-    sp.setProduct(p);
-    sp.setPendingSuspensions(SuspensionFixture.Past());
-    return sp;
+    return SubscriptionProduct.builder().product(p).pendingSuspensions(SuspensionFixture.Past()).build();
   }
+
+  private static SubscriptionProduct createSubscriptionProductWithPromo(Product p) {
+    return SubscriptionProduct.builder().product(p).promotion(PromoFixture.Promo1()).build();
+  }
+
+
 }

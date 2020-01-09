@@ -2,6 +2,9 @@ package odm.voltaire.fixtures;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import odm.voltaire.models.Product;
 
@@ -51,6 +54,48 @@ public class ProductFixture {
     p.setRatePlan(RatePlanFixture.basicHdRatePlan(new BigDecimal(rate)));
     p.setWeekdaySpecific(true);
     p.setDeliveryDay(day);
+    p.setId(day.getValue());
     return p;
+  }
+
+  public static List<Product> combo12() {
+    return new ArrayList<>(
+      Arrays.asList(ProductFixture.HdMonday(), 
+                    ProductFixture.HdTuesday())
+    );
+  }
+  public static List<Product> combo123() {
+    return new ArrayList<>(
+      Arrays.asList(ProductFixture.HdMonday(), 
+                    ProductFixture.HdTuesday(), 
+                    ProductFixture.HdWednesday())
+    );
+  }
+  public static List<Product> combo1234() {
+    return new ArrayList<>(
+      Arrays.asList(ProductFixture.HdMonday(), 
+                    ProductFixture.HdTuesday(), 
+                    ProductFixture.HdWednesday(),
+                    ProductFixture.HdThursday())
+    );
+  }
+  public static List<Product> combo12345() {
+    return new ArrayList<>(
+      Arrays.asList(ProductFixture.HdMonday(), 
+                    ProductFixture.HdTuesday(), 
+                    ProductFixture.HdWednesday(),
+                    ProductFixture.HdThursday(),
+                    ProductFixture.HdFriday())
+    );
+  }
+  public static List<Product> combo45() {
+    return new ArrayList<>(
+      Arrays.asList(ProductFixture.HdThursday(), ProductFixture.HdFriday())
+    );
+  }
+  public static List<Product> combo5() {
+    return new ArrayList<>(
+      Arrays.asList(ProductFixture.HdFriday())
+    );
   }
 }

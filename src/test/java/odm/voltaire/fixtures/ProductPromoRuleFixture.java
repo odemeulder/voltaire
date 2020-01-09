@@ -13,33 +13,17 @@ import odm.voltaire.models.Promo;
 public class ProductPromoRuleFixture {
 
   public static List<ProductPromoRule> allRules() {
-    Promo promo1 = newPromo("A");
-    Promo promo2 = newPromo("B");
-    Promo promo3 = newPromo("C");
-    Promo promo4 = newPromo("D");
-    Promo promo5 = newPromo("E");
-    Promo promo6 = newPromo("F");
-    List<Integer> combo1 = new ArrayList<>(Arrays.asList(1,2,3));
-    List<Integer> combo2 = new ArrayList<>(Arrays.asList(1,2,3,4));
-    List<Integer> combo3 = new ArrayList<>(Arrays.asList(5));
-    List<Integer> combo4 = new ArrayList<>();
-    List<Integer> combo5 = new ArrayList<>(Arrays.asList(6, 7, 8));
+    List<Integer> combo123 = new ArrayList<>(Arrays.asList(1,2,3));
+    List<Integer> combo1234 = new ArrayList<>(Arrays.asList(1,2,3,4));
+    List<Integer> combo5 = new ArrayList<>(Arrays.asList(5));
+    List<Integer> combo6 = new ArrayList<>(Arrays.asList(5, 6, 7));
     List<ProductPromoRule> rv = new ArrayList<>();
-    rv.add(newProductPromoRule(combo1, promo1));
-    rv.add(newProductPromoRule(combo1, promo2));
-    rv.add(newProductPromoRule(combo2, promo3));
-    rv.add(newProductPromoRule(combo4, promo4));
-    rv.add(newProductPromoRule(combo5, promo5));
-    rv.add(newProductPromoRule(combo3, promo6));
+    rv.add(newProductPromoRule(combo123, PromoFixture.Promo1()));
+    rv.add(newProductPromoRule(combo123, PromoFixture.Promo2()));
+    rv.add(newProductPromoRule(combo1234, PromoFixture.Promo3()));
+    rv.add(newProductPromoRule(combo5, PromoFixture.Promo5()));
+    rv.add(newProductPromoRule(combo6, PromoFixture.Promo6()));
     return rv;
-  }
-
-  private static Promo newPromo(String description) {
-    Promo p = new Promo();
-    p.setId(1);
-    p.setDescription(description);
-    p.setDiscount(.1);
-    return p;
   }
 
   private static ProductPromoRule newProductPromoRule(List<Integer> combo, Promo promo) {
